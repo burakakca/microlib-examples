@@ -10,7 +10,7 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, "dist"),
     publicPath:
-      "https://api.github.com?owner=burakakca&repo=microlib-example&filedir=dist&branch=cache",
+      "https://api.github.com?owner=burakakca&repo=microlib-examples&filedir=dist&branch=cache",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",

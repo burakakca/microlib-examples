@@ -1,5 +1,5 @@
 {
-  "name": "microlib-example",
+  "name": "microlib-examples",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/main.js",
