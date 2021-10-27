@@ -1999,15 +1999,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {Symbol} customerId {@link Customer}
  */
 
-var orderStatus = 'orderStatus';
-var orderTotal = 'orderTotal';
-var orderNo = 'orderNo';
+var orderStatus = "orderStatus";
+var orderTotal = "orderTotal";
+var orderNo = "orderNo";
 var OrderStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  SHIPPING: 'SHIPPING',
-  COMPLETE: 'COMPLETE',
-  CANCELED: 'CANCELED'
+  PENDING: "PENDING",
+  APPROVED: "APPROVED",
+  SHIPPING: "SHIPPING",
+  COMPLETE: "COMPLETE",
+  CANCELED: "CANCELED"
 };
 /**
  *
@@ -2016,18 +2016,18 @@ var OrderStatus = {
 
 var checkItems = function checkItems(orderItems) {
   if (!orderItems) {
-    throw new Error('order contains no items');
+    throw new Error("order contains no items");
   }
 
   var items = Array.isArray(orderItems) ? orderItems : [orderItems];
 
   if (items.length > 0 && items.every(function (i) {
-    return i.itemId && typeof i.price === 'number';
+    return i.itemId && typeof i.price === "number";
   })) {
     return items;
   }
 
-  throw new Error('order items invalid');
+  throw new Error("order items invalid");
 };
 /**
  * Calculate order total
@@ -2124,7 +2124,7 @@ var statusChangeValid = function statusChangeValid(o, propVal) {
   if (invalidStatusChanges.some(function (isc) {
     return isc(o, propVal);
   })) {
-    throw new Error('invalid status change');
+    throw new Error("invalid status change");
   }
 
   return true;
@@ -2166,7 +2166,7 @@ var updateSignature = function updateSignature(o, propVal) {
 
 function readyToDelete(model) {
   if (![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)) {
-    throw new Error('order must be canceled or completed');
+    throw new Error("order must be canceled or completed,ALOOOOOOOOOO");
   }
 
   return model;
@@ -2179,12 +2179,12 @@ function readyToDelete(model) {
 
 function handleError(error, order, func) {
   try {
-    if (order) order.emit('orderError', {
+    if (order) order.emit("orderError", {
       func: func,
       error: error
     });
   } catch (error) {
-    console.error('order.emit', error);
+    console.error("order.emit", error);
   }
 
   console.error({
@@ -2223,7 +2223,7 @@ function _paymentCompleted() {
             options = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : {};
             payload = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('confirmationCode', options, payload, paymentCompleted.name);
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("confirmationCode", options, payload, paymentCompleted.name);
             return _context7.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
               orderStatus: OrderStatus.COMPLETE
             })));
@@ -2260,7 +2260,7 @@ function _orderShipped() {
             options = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : {};
             payload = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : {};
             order = options.model;
-            shipmentPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('shipmentId', options, payload, orderShipped.name);
+            shipmentPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("shipmentId", options, payload, orderShipped.name);
             return _context8.abrupt("return", order.update({
               shipmentId: shipmentPayload.shipmentId,
               orderStatus: OrderStatus.SHIPPING
@@ -2299,7 +2299,7 @@ function _orderPicked() {
             options = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : {};
             payload = _args9.length > 1 && _args9[1] !== undefined ? _args9[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('pickupAddress', options, payload, addressValidated.name);
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("pickupAddress", options, payload, addressValidated.name);
             return _context9.abrupt("return", order.update(changes));
 
           case 5:
@@ -2335,7 +2335,7 @@ function _addressValidated() {
             options = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : {};
             payload = _args10.length > 1 && _args10[1] !== undefined ? _args10[1] : {};
             order = options.model;
-            addressPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('shippingAddress', options, payload, addressValidated.name);
+            addressPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("shippingAddress", options, payload, addressValidated.name);
             return _context10.abrupt("return", order.update({
               shippingAddress: addressPayload.shippingAddress
             }));
@@ -2374,7 +2374,7 @@ function _paymentAuthorized() {
             options = _args11.length > 0 && _args11[0] !== undefined ? _args11[0] : {};
             payload = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('paymentAuthorization', options, payload, paymentAuthorized.name);
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("paymentAuthorization", options, payload, paymentAuthorized.name);
             return _context11.abrupt("return", order.update(changes));
 
           case 5:
@@ -2405,7 +2405,7 @@ function _refundPayment() {
           case 0:
             // call port by same name.
             order.refundPayment(function (options, payload) {
-              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('refundReceipt', options, payload, refundPayment.name);
+              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("refundReceipt", options, payload, refundPayment.name);
               return order.update(_objectSpread(_objectSpread({}, changes), {}, {
                 orderStatus: OrderStatus.CANCELED
               }));
@@ -2453,7 +2453,7 @@ function _getCustomerOrder() {
               break;
             }
 
-            throw new Error('invalid customer id', order.customerId);
+            throw new Error("invalid customer id", order.customerId);
 
           case 6:
             // Add customer data to the order
@@ -2465,7 +2465,7 @@ function _getCustomerOrder() {
 
           case 9:
             update = _context13.sent;
-            console.info('update order with data from existing customer', custInfo);
+            console.info("update order with data from existing customer", custInfo);
             return _context13.abrupt("return", update);
 
           case 12:
@@ -2482,7 +2482,7 @@ function _getCustomerOrder() {
 
           case 16:
             _customer = _context13.sent;
-            console.info('create new customer with data from order', _customer);
+            console.info("create new customer with data from order", _customer);
             return _context13.abrupt("return", order);
 
           case 19:
@@ -2522,7 +2522,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
               break;
             }
 
-            throw new Error('payment auth problem', payment.error);
+            throw new Error("payment auth problem", payment.error);
 
           case 9:
             if (payment.object.paymentAccepted()) {
@@ -2530,7 +2530,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
               break;
             }
 
-            throw new Error('payment authorization declined');
+            throw new Error("payment authorization declined");
 
           case 11:
             _context.next = 13;
@@ -2591,7 +2591,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
 
           case 3:
             _context2.next = 5;
-            return order.emit('PayAuthFail', 'Payment authorization problem');
+            return order.emit("PayAuthFail", "Payment authorization problem");
 
           case 5:
             return _context2.abrupt("return", order);
@@ -2649,7 +2649,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             _context4.prev = 0;
             console.debug({
               func: OrderStatus.CANCELED,
-              desc: 'calling undo',
+              desc: "calling undo",
               orderNo: order.orderNo
             });
             return _context4.abrupt("return", order.undo());
@@ -2676,7 +2676,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
-            console.log('do customer sentiment etc');
+            console.log("do customer sentiment etc");
             return _context5.abrupt("return");
 
           case 2:
@@ -2740,7 +2740,7 @@ function _handleOrderEvent() {
           case 0:
             order = _ref6.model, eventType = _ref6.eventType, changes = _ref6.changes;
 
-            if (!((changes === null || changes === void 0 ? void 0 : changes.orderStatus) || eventType === 'CREATE')) {
+            if (!((changes === null || changes === void 0 ? void 0 : changes.orderStatus) || eventType === "CREATE")) {
               _context15.next = 3;
               break;
             }
@@ -2758,7 +2758,7 @@ function _handleOrderEvent() {
 }
 
 function needsSignature(input, orderTotal) {
-  return typeof input === 'boolean' ? input : orderTotal > 999.99;
+  return typeof input === "boolean" ? input : orderTotal > 999.99;
 }
 /**
  * Returns factory function for the Order model.
@@ -2917,7 +2917,7 @@ function errorCallback(_ref8) {
   var port = _ref8.port,
       order = _ref8.model,
       error = _ref8.error;
-  console.error('error...', port, error);
+  console.error("error...", port, error);
   return order.undo();
   "";
 }
@@ -2931,7 +2931,7 @@ function timeoutCallback(_ref9) {
       ports = _ref9.ports,
       adapterFn = _ref9.adapterFn,
       order = _ref9.model;
-  console.error('timeout...', port);
+  console.error("timeout...", port);
 }
 /**
  * Start process to return canceled order items to inventory.
