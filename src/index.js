@@ -20,7 +20,7 @@ const PORT = 8060;
 import axios from "axios";
 // list the models we expose to host through module federation
 import { models } from "./domain";
-console.log(models);
+console.log("MODELSS", models);
 
 // Run test service endpoints
 services.init();
@@ -142,9 +142,9 @@ function hotReload() {
       });
       axios
         .get(url, { httpsAgent })
-        .then(response => console.log(response.data));
+        .then((response) => console.log(response.data));
     } else {
-      axios.get(url).then(response => console.log(response.data));
+      axios.get(url).then((response) => console.log(response.data));
     }
   } catch (e) {
     console.log(e.message);

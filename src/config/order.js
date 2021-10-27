@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 import {
   makeOrderFactory,
@@ -22,318 +22,324 @@ import {
   requiredForGuest,
   requiredForApproval,
   approve,
-  cancel
-} from '../domain/order'
+  cancel,
+} from "../domain/order";
 
 import {
   requireProperties,
   freezeProperties,
   updateProperties,
   validateProperties,
-  validateModel
-} from '../domain/mixins'
+  validateModel,
+} from "../domain/mixins";
 
-import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
-import { nanoid } from 'nanoid'
+import { DataSourceAdapterMongoDb } from "../adapters/datasources/datasource-mongodb";
+import { nanoid } from "nanoid";
 
 /**
  * @type {import('../domain/index').ModelSpecification}
  */
 export const Order = {
-  modelName: 'order',
-  endpoint: 'orders',
+  modelName: "order",
+  endpoint: "orders",
   factory: makeOrderFactory,
   datasource: {
     factory: DataSourceAdapterMongoDb,
-    url: 'mongodb://localhost:27017',
-    //url: "mongodb://aegis.module-federation.org:27017",
+    url: "mongodb://localhost:27017",
+    //url: "mongodb://aegis.burakakca.org:27017",
     cacheSize: 4000,
-    baseClass: 'DataSourceMongoDb'
+    baseClass: "DataSourceMongoDb",
   },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
-      'orderItems',
+      "orderItems",
       requiredForGuest([
-        'lastName',
-        'firstName',
-        'billingAddress',
-        'shippingAddress',
-        'creditCardNumber',
-        'email'
+        "lastName",
+        "firstName",
+        "billingAddress",
+        "shippingAddress",
+        "creditCardNumber",
+        "email",
       ]),
-      requiredForApproval('paymentAuthorization'),
-      requiredForCompletion('proofOfDelivery')
+      requiredForApproval("paymentAuthorization"),
+      requiredForCompletion("proofOfDelivery")
     ),
     freezeProperties(
-      'orderNo',
-      'customerId',
+      "orderNo",
+      "customerId",
       freezeOnApproval([
-        'email',
-        'lastName',
-        'firstName',
-        'orderItems',
-        'orderTotal',
-        'billingAddress',
-        'shippingAddress',
-        'creditCardNumber',
-        'paymentAuthorization'
+        "email",
+        "lastName",
+        "firstName",
+        "orderItems",
+        "orderTotal",
+        "billingAddress",
+        "shippingAddress",
+        "creditCardNumber",
+        "paymentAuthorization",
       ]),
-      freezeOnCompletion('*')
+      freezeOnCompletion("*")
     ),
     updateProperties([
       {
-        propKey: 'orderItems',
-        update: recalcTotal
+        propKey: "orderItems",
+        update: recalcTotal,
       },
       {
-        propKey: 'orderItems',
-        update: updateSignature
-      }
+        propKey: "orderItems",
+        update: updateSignature,
+      },
     ]),
     validateProperties([
       {
-        propKey: 'orderStatus',
+        propKey: "orderStatus",
         values: Object.values(OrderStatus),
-        isValid: statusChangeValid
+        isValid: statusChangeValid,
       },
       {
-        propKey: 'orderTotal',
+        propKey: "orderTotal",
         maxnum: 99999.99,
-        isValid: orderTotalValid
+        isValid: orderTotalValid,
       },
       {
-        propKey: 'email',
-        regex: 'email'
+        propKey: "email",
+        regex: "email",
       },
       {
-        propKey: 'creditCardNumber',
-        regex: 'creditCard'
+        propKey: "creditCardNumber",
+        regex: "creditCard",
       },
       {
-        propKey: 'phone',
-        regex: 'phone'
-      }
-    ])
+        propKey: "phone",
+        regex: "phone",
+      },
+    ]),
   ],
   validate: validateModel,
   onDelete: readyToDelete,
   eventHandlers: [handleOrderEvent],
   ports: {
     listen: {
-      service: 'Event',
-      type: 'outbound',
-      timeout: 0
+      service: "Event",
+      type: "outbound",
+      timeout: 0,
     },
     notify: {
-      service: 'Event',
-      type: 'outbound',
-      timeout: 0
+      service: "Event",
+      type: "outbound",
+      timeout: 0,
     },
     save: {
-      service: 'Persistence',
-      type: 'outbound',
-      timeout: 0
+      service: "Persistence",
+      type: "outbound",
+      timeout: 0,
     },
     find: {
-      service: 'Persistence',
-      type: 'outbound',
-      timeout: 0
+      service: "Persistence",
+      type: "outbound",
+      timeout: 0,
     },
     validateAddress: {
-      service: 'Address',
-      type: 'outbound',
-      keys: 'shippingAddress',
-      producesEvent: 'addressValidated',
-      disabled: true
+      service: "Address",
+      type: "outbound",
+      keys: "shippingAddress",
+      producesEvent: "addressValidated",
+      disabled: true,
     },
     authorizePayment: {
-      service: 'Payment',
-      type: 'outbound',
-      keys: 'paymentAuthorization',
-      consumesEvent: 'startWorkflow',
-      producesEvent: 'paymentAuthorized',
-      undo: cancelPayment
+      service: "Payment",
+      type: "outbound",
+      keys: "paymentAuthorization",
+      consumesEvent: "startWorkflow",
+      producesEvent: "paymentAuthorized",
+      undo: cancelPayment,
     },
     pickOrder: {
-      service: 'Inventory',
-      type: 'outbound',
-      keys: 'pickupAddress',
-      consumesEvent: 'itemsAvailable',
-      producesEvent: 'orderPicked',
+      service: "Inventory",
+      type: "outbound",
+      keys: "pickupAddress",
+      consumesEvent: "itemsAvailable",
+      producesEvent: "orderPicked",
       undo: returnInventory,
       circuitBreaker: {
         portTimeout_pickOrder_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1
-        }
-      }
+          intervalMs: 1,
+        },
+      },
     },
     shipOrder: {
-      service: 'Shipping',
-      type: 'outbound',
+      service: "Shipping",
+      type: "outbound",
       callback: orderShipped,
-      consumesEvent: 'orderPicked',
-      producesEvent: 'orderShipped',
+      consumesEvent: "orderPicked",
+      producesEvent: "orderShipped",
       undo: returnShipment,
       circuitBreaker: {
         portTimeout_shipOrder_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1
+          intervalMs: 1,
         },
         portRetryFailed_order: {
           callVolume: 2,
           errorRate: 2,
           intervalMs: 2,
-          fallbackFn: cancel
+          fallbackFn: cancel,
         },
         default: {
           callVolume: 3,
           errorRate: 3,
-          intervalMs: 3
-        }
-      }
+          intervalMs: 3,
+        },
+      },
     },
     trackShipment: {
-      service: 'Shipping',
-      type: 'outbound',
-      keys: ['trackingStatus', 'trackingId'],
-      consumesEvent: 'orderShipped',
-      producesEvent: 'orderDelivered',
+      service: "Shipping",
+      type: "outbound",
+      keys: ["trackingStatus", "trackingId"],
+      consumesEvent: "orderShipped",
+      producesEvent: "orderDelivered",
       circuitBreaker: {
         portRetryFailed_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1
-        }
-      }
+          intervalMs: 1,
+        },
+      },
     },
     verifyDelivery: {
-      service: 'Shipping',
-      type: 'outbound',
-      keys: 'proofOfDelivery',
-      consumesEvent: 'orderDelivered',
-      producesEvent: 'deliveryVerified',
-      undo: returnDelivery
+      service: "Shipping",
+      type: "outbound",
+      keys: "proofOfDelivery",
+      consumesEvent: "orderDelivered",
+      producesEvent: "deliveryVerified",
+      undo: returnDelivery,
     },
     completePayment: {
-      service: 'Payment',
-      type: 'outbound',
+      service: "Payment",
+      type: "outbound",
       callback: paymentCompleted,
-      consumesEvent: 'deliveryVerified',
-      producesEvent: 'orderComplete',
-      undo: refundPayment
+      consumesEvent: "deliveryVerified",
+      producesEvent: "orderComplete",
+      undo: refundPayment,
     },
     cancelShipment: {
-      service: 'Shipping',
-      type: 'outbound'
+      service: "Shipping",
+      type: "outbound",
     },
     refundPayment: {
-      service: 'Payment',
-      type: 'outbound'
+      service: "Payment",
+      type: "outbound",
     },
     mlDeployModel: {
-      service: 'MLops',
-      type: 'outbound',
-      adapter: service => ({ model, args: [callback, trainingDataLoc] }) =>
-        service
-          .getDeploymentService('MLops')
-          .startDeployment(callback, model, trainingDataLoc),
-      consumesEvent: 'mlDeploymentRequested',
-      producesEvent: 'mlDeploymentVerified',
-      internal: true // no 3rd party comms, handled by appmesh
+      service: "MLops",
+      type: "outbound",
+      adapter:
+        (service) =>
+        ({ model, args: [callback, trainingDataLoc] }) =>
+          service
+            .getDeploymentService("MLops")
+            .startDeployment(callback, model, trainingDataLoc),
+      consumesEvent: "mlDeploymentRequested",
+      producesEvent: "mlDeploymentVerified",
+      internal: true, // no 3rd party comms, handled by appmesh
     },
     mlTrainModel: {
-      service: 'MLops',
-      type: 'outbound',
-      consumesEvent: 'mlDeploymentVerified',
-      producesEvent: 'mlModelConverged',
-      adapter: service => ({ args: [callback, id] }) =>
-        service.startTraining(id, callback),
-      internal: true
+      service: "MLops",
+      type: "outbound",
+      consumesEvent: "mlDeploymentVerified",
+      producesEvent: "mlModelConverged",
+      adapter:
+        (service) =>
+        ({ args: [callback, id] }) =>
+          service.startTraining(id, callback),
+      internal: true,
     },
     mlReportLearning: {
-      service: 'MLops',
-      type: 'outbound',
-      consumesEvent: 'mlModelConverged',
-      producesEvent: 'mlReportLearning',
-      adapter: service => ({ args: [callback, id] }) =>
-        service.sendResults(id, callback),
-      internal: true
-    }
+      service: "MLops",
+      type: "outbound",
+      consumesEvent: "mlModelConverged",
+      producesEvent: "mlReportLearning",
+      adapter:
+        (service) =>
+        ({ args: [callback, id] }) =>
+          service.sendResults(id, callback),
+      internal: true,
+    },
   },
   relations: {
     customer: {
-      modelName: 'customer',
-      foreignKey: 'customerId',
-      type: 'manyToOne',
-      desc: 'Many orders per customer, just one customer per order'
+      modelName: "customer",
+      foreignKey: "customerId",
+      type: "manyToOne",
+      desc: "Many orders per customer, just one customer per order",
     },
     product: {
-      modelName: 'product',
-      foreignKey: 'productId',
-      type: 'manyToOne'
-    }
+      modelName: "product",
+      foreignKey: "productId",
+      type: "manyToOne",
+    },
   },
   commands: {
     decrypt: {
-      command: 'decrypt',
-      acl: ['read', 'decrypt']
+      command: "decrypt",
+      acl: ["read", "decrypt"],
     },
     approve: {
       command: approve,
-      acl: ['write', 'approve']
+      acl: ["write", "approve"],
     },
     cancel: {
       command: cancel,
-      acl: ['write', 'cancel']
+      acl: ["write", "cancel"],
     },
     runFibonacci: {
-      command: model => {
-        const start = Date.now()
-        function fibonacci (x) {
+      command: (model) => {
+        const start = Date.now();
+        function fibonacci(x) {
           if (x === 0) {
-            return 0
+            return 0;
           }
 
           if (x === 1) {
-            return 1
+            return 1;
           }
 
-          return fibonacci(x - 1) + fibonacci(x - 2)
+          return fibonacci(x - 1) + fibonacci(x - 2);
         }
-        const param = parseFloat(model.fibonacci)
+        const param = parseFloat(model.fibonacci);
         return {
           result: fibonacci(Number.isNaN(param) ? 10 : param),
-          time: Date.now() - start
-        }
+          time: Date.now() - start,
+        };
       },
-      acl: ['read', 'write']
-    }
+      acl: ["read", "write"],
+    },
   },
   serializers: [
     {
-      on: 'deserialize',
-      key: 'creditCardNumber',
-      type: 'string',
+      on: "deserialize",
+      key: "creditCardNumber",
+      type: "string",
       value: (key, value) => decrypt(value),
-      enabled: false
+      enabled: false,
     },
     {
-      on: 'deserialize',
-      key: 'shippingAddress',
-      type: 'string',
+      on: "deserialize",
+      key: "shippingAddress",
+      type: "string",
       value: (key, value) => decrypt(value),
-      enabled: false
+      enabled: false,
     },
     {
-      on: 'deserialize',
-      key: 'billingAddress',
-      type: 'string',
+      on: "deserialize",
+      key: "billingAddress",
+      type: "string",
       value: (key, value) => decrypt(value),
-      enabled: false
-    }
-  ]
-}
+      enabled: false,
+    },
+  ],
+};
