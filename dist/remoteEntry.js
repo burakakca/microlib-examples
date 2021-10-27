@@ -32114,7 +32114,7 @@ module.exports = require("zlib");
 /******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
-/******/ 		__webpack_require__.p = "https://api.github.com?owner=burakakca&repo=microlib-example&filedir=dist&branch=master";
+/******/ 		__webpack_require__.p = "https://api.github.com?owner=burakakca&repo=microlib-examples&filedir=dist&branch=master";
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/sharing */
@@ -32131,7 +32131,7 @@ module.exports = require("zlib");
 /******/ 			// runs all init snippets from all modules reachable
 /******/ 			var scope = __webpack_require__.S[name];
 /******/ 			var warn = (msg) => typeof console !== "undefined" && console.warn && console.warn(msg);;
-/******/ 			var uniqueName = "microlib-example";
+/******/ 			var uniqueName = "microlib-examples";
 /******/ 			var register = (name, version, factory) => {
 /******/ 				var versions = scope[name] = scope[name] || {};
 /******/ 				var activeVersion = versions[version];
