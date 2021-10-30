@@ -206,7 +206,7 @@ export function readyToDelete(model) {
   if (
     ![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)
   ) {
-    throw new Error("order must be canceled or completed,BURAK");
+    throw new Error("order must be canceled or completed,TEST TEST TEST");
   }
   return model;
 }
