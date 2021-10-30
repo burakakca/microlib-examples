@@ -178,7 +178,6 @@ var Order = {
   datasource: {
     factory: _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__.DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
-    //url: "mongodb://aegis.burakakca.org:27017",
     cacheSize: 4000,
     baseClass: "DataSourceMongoDb"
   },
@@ -2166,7 +2165,7 @@ var updateSignature = function updateSignature(o, propVal) {
 
 function readyToDelete(model) {
   if (![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)) {
-    throw new Error("order must be canceled or completed,BURAK");
+    throw new Error("order must be canceled or completed,TEST TEST TEST");
   }
 
   return model;

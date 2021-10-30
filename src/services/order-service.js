@@ -22,6 +22,7 @@ export class OrderService {
   }
 
   addOrder(orderInfo) {
+    console.log("Helloooooooooooo", orderInfo);
     this.adapter.addOrder(orderInfo);
     return this;
   }
